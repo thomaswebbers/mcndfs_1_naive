@@ -1,4 +1,4 @@
-package ndfs.mcndfs_1_naive;
+package mc_ndfs_naive_package;
 
 import java.io.File;
 import java.io.FileNotFoundException;

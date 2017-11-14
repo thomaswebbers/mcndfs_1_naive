@@ -1,12 +1,9 @@
 package ndfs.mcndfs_1_naive;
 
-import java.util.concurrent.atomic;
-
-import ndfs.NDFS;
-
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Lock {
-    private AtomicBoolean locked;
+    private AtomicBoolean locked = new AtomicBoolean();
 
     public Lock(){
         locked.set(false);
