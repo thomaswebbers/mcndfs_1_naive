@@ -44,6 +44,7 @@ public class Worker {
     private void dfsRed(State s) throws CycleFoundException {
 
         long myID = Thread.currentThread().getId(); //!gets thread ID
+
         //s.pink[i] := true
         colors.setPink(s, myID);
         //for all t in post(s) do
@@ -88,15 +89,17 @@ public class Worker {
         //!start
         //s.color[W_ID] := cyan
         colors.color(s, myID, Color.CYAN);
+
         //for all t in post(s) do
         for (State t: graph.post(s)){
-            //if t.color[W_ID] == (white && t.red)
-            if (colors.hasColor(t, myID, Color.WHITE) && colors.hasRed(t)) {
+            //if t.color[W_ID] == (white && NOT t.red)
+            if (colors.hasColor(t, myID, Color.WHITE) && !colors.hasRed(t)) {
                 //dfs_blue(t, W_ID) //W_ID not necessary?
                 dfsBlue(t);
             }
         }
         //if s ELEMENT OF Accepted
+
         if (s.isAccepting()){
             //s.count := s.count +1
             lock.lock();

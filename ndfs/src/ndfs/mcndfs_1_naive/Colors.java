@@ -75,6 +75,6 @@ public class Colors {
 
     public boolean hasPink(State state, long workerID){
         LocalState input = new LocalState(workerID, state);
-        return pinkMap.get(input) == true;
+        return pinkMap.get(input) != null;
     }
 }

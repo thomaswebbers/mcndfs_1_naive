@@ -1,7 +1,7 @@
 /* A binary tree of depth max, with accepting states at depth accept, and an accepting cycle at a single leaf */
 
-int accept = 13; /* smaller or equal to max */
-int max = 19; /* smaller or equal to 30 */
+int accept = 3; /* smaller or equal to max */
+int max = 5; /* smaller or equal to 30 */
 
 int single = (1 << max); /* can be any number >= 0 and < (1 << max), or there is no accepting cycle */
 /* int single = 65536; /* can be any number >= 0 and < (1 << max), or there is no accepting cycle */

@@ -44,7 +44,7 @@ public class LocalState {
 
         LocalState input = (LocalState) obj;
 
-        if(input.getState() == state){
+        if(input.getState().equals(state)){
             if (input.getWorkerID() == workerID){
                 return true;
             }
