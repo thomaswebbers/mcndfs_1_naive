@@ -1,4 +1,4 @@
-package ndfs.mcndfs_1_naive;
+package ndfs.src.ndfs.mcndfs_1_naive;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -14,13 +14,14 @@ import java.util.Map;
  * <a href="http://www.cs.vu.nl/~tcs/cm/ndfs/laarman.pdf"> "the Laarman
  * paper"</a>.
  */
-public class Worker {
+public class Worker implements  Runnable{
 
     private final Graph graph;
-    private final Colors colors = new Colors();
+    private Colors colors;
     private boolean result = false;
+    //Make long??
     private final Map<State, Integer> countMap = new HashMap<State, Integer>();
-    public volatile Lock lock = new Lock();
+    public volatile Lock lock = null;
 
     // Throwing an exception is a convenient way to cut off the search in case a
     // cycle is found.
@@ -35,15 +36,21 @@ public class Worker {
      * @throws FileNotFoundException
      *             is thrown in case the file could not be read.
      */
-    public Worker(File promelaFile) throws FileNotFoundException {
-
+    public Worker(Colors colors, File promelaFile, Lock lock) throws FileNotFoundException {
+        this.colors = colors;
         this.graph = GraphFactory.createGraph(promelaFile);
+        this.lock = lock;
+        long myID = Thread.currentThread().getId();
+        System.out.println("MY ID is: " + myID);
+
         //create global_graph and localGraph (which is a graph array?)
     }
 
     private void dfsRed(State s) throws CycleFoundException {
 
+
         long myID = Thread.currentThread().getId(); //!gets thread ID
+        System.out.println("MY ID is: " + myID);
 
         //s.pink[i] := true
         colors.setPink(s, myID);
@@ -85,7 +92,7 @@ public class Worker {
     private void dfsBlue(State s) throws CycleFoundException {
 
         long myID = Thread.currentThread().getId(); //!gets thread ID, would this work?
-
+        System.out.println("MY ID is: " + myID);
         //!start
         //s.color[W_ID] := cyan
         colors.color(s, myID, Color.CYAN);
@@ -120,7 +127,13 @@ public class Worker {
         //!end
     }
 
-    private void nndfs(State s) throws CycleFoundException {
+
+    public boolean getResult() {
+        return result;
+    }
+
+
+        private void nndfs(State s) throws CycleFoundException {
         dfsBlue(s);
     }
 
@@ -130,9 +143,5 @@ public class Worker {
         } catch (CycleFoundException e) {
             result = true;
         }
-    }
-
-    public boolean getResult() {
-        return result;
     }
 }

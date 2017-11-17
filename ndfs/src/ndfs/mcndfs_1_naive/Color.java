@@ -1,4 +1,4 @@
-package ndfs.mcndfs_1_naive;
+package ndfs.src.ndfs.mcndfs_1_naive;
 
 /**
  * This enumeration enumerates the possible colors.
