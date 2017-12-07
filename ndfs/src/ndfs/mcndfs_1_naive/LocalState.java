@@ -1,4 +1,4 @@
-package ndfs.src.ndfs.mcndfs_1_naive;
+package ndfs.mcndfs_1_naive;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Objects;
@@ -18,10 +18,6 @@ public class LocalState {
 
     public void setState(State input){
         state = input;
-    }
-
-    public void setWorkerID(long input){
-        workerID = input;
     }
 
     public State getState(){

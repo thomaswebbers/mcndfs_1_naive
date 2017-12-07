@@ -1,7 +1,7 @@
 /* A binary tree of depth max, with accepting states at depth accept */
 
-int accept = 16; /* smaller or equal to max */
-int max = 19; /* smaller or equal to 30 */
+int accept = 3; /* smaller or equal to max */
+int max = 5; /* smaller or equal to 30 */
 
 init {
 	int d = 0; /* depth */

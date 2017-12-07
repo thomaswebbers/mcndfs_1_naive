@@ -1,8 +1,12 @@
-package ndfs.src.ndfs.mcndfs_1_naive;
+package ndfs.mcndfs_1_naive;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.*;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
 
 import graph.State;
 import ndfs.NDFS;
@@ -13,14 +17,19 @@ import ndfs.NDFS;
  */
 public class NNDFS implements NDFS {
 
-    public static final int NUMBER_OF_WORKERS = 2;
-    private Colors colors = null;
-    Worker[] workers;
+    private int numberOfWorkers;
+    private GlobalColors globalColors = new GlobalColors();
 
-    private boolean result = false;
+    Worker[] workers;
+    Thread[] threads;
+    File promelaFile;
+    Boolean result = false;
+    Map<State, Integer> countMap;
     //Make long??
-    private final Map<State, Integer> countMap = new HashMap<State, Integer>();
-    public volatile Lock lock = new Lock();
+
+    public volatile Lock lock = new ReentrantLock();
+
+    public volatile Condition stateFinish = lock.newCondition();
 
     // Throwing an exception is a convenient way to cut off the search in case a
     // cycle is found.
@@ -28,38 +37,42 @@ public class NNDFS implements NDFS {
     }
 
 
-    public NNDFS()  {
-        colors = new Colors();
-        workers = new Worker[NUMBER_OF_WORKERS+1];
+    public NNDFS(File promelaFile, int numberOfThreads) throws  FileNotFoundException{
+        numberOfWorkers = numberOfThreads;
+        workers = new Worker[numberOfThreads];
+        globalColors = new GlobalColors();
+        this.promelaFile = promelaFile;
+
+        countMap = globalColors.getCountMap();
     }
-
-
-    private void start(File promelaFile) throws  FileNotFoundException{
-        for(int i = 1; i <= NUMBER_OF_WORKERS; i++){
-            Worker workerObject = new Worker(colors, promelaFile, lock);
-            workers[i] = workerObject;
-            new Thread (workerObject).start();
-        }
-
-        boolean result = ndfs();
-    }
-
-
-    public static void main(String[] args) throws FileNotFoundException {
-        File promelaFile = new File(args[0]);
-        new NNDFS().start(promelaFile);
-    }
-
 
    @Override
     public boolean ndfs() {
-       for (int i = 1; i <= NUMBER_OF_WORKERS; i++) {
-           if(workers[i].getResult()){
-               return true;
+
+       ExecutorService executor = Executors.newFixedThreadPool(numberOfWorkers);
+       CompletionService<Boolean> completionService = new ExecutorCompletionService(executor);
+
+
+       //Create and start threads with worker objects in them
+       for(int i = 0; i < numberOfWorkers; i++) {
+           try {
+               completionService.submit(new Worker(i, globalColors, promelaFile, lock, countMap, stateFinish));
+           } catch (FileNotFoundException e) {
+               e.printStackTrace();
            }
        }
-       return false;
-   }
+
+       try {
+           result = completionService.take().get();
+           executor.shutdownNow();
+           System.out.println(result);
+       } catch (InterruptedException | ExecutionException e) {
+           e.printStackTrace();
+       }
+
+       executor.shutdownNow();
+       return globalColors.result();
+    }
 }
 
 

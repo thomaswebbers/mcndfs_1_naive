@@ -1,8 +1,8 @@
 /* A binary tree of depth max, with accepting states at depth accept, 
    and an accepting cycle at each leaf */
 
-int accept = 13; /* smaller or equal to max */
-int max = 19; /* smaller or equal to 30 */
+int accept = 1; /* smaller or equal to max */
+int max = 2; /* smaller or equal to 30 */
 
 init {
 	int d = 0; /* depth */

@@ -1,18 +1,17 @@
-package ndfs.src.ndfs.mcndfs_1_naive;
-import java.util.HashMap;
-import java.util.Map;
+package ndfs.mcndfs_1_naive;
 
 import graph.State;
 
-/**
- * This class provides a color map for graph states.
- */
-public class Colors {
+import java.util.HashMap;
+import java.util.Map;
 
+/**
+ * Created by thomaswebbers on 02/12/2017.
+ */
+public class LocalColors {
     private final Map<LocalState, Color> map = new HashMap<LocalState, Color>();
-    private final Map<State, Boolean> redMap = new HashMap<State, Boolean>(); //if State is in here, it is red
     private final Map<LocalState, Boolean> pinkMap = new HashMap<LocalState, Boolean>(); //if <State,workerID> is in here, it is pink
-    //! the boolean is theoretically unnecessary, but removing it might break HashMap
+
 
 
     /**
@@ -52,14 +51,6 @@ public class Colors {
         } else {
             map.put(input, color);
         }
-    }
-
-    public void setRed(State state){
-        redMap.put(state, true);
-    }
-
-    public boolean hasRed(State state){
-        return redMap.get(state) != null; //I know, i know. Redundant.
     }
 
     public void setPink(State state, long workerID){
